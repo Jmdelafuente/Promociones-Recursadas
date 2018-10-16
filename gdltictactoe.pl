@@ -1,41 +1,120 @@
 %para ejecutar ?-inicio,juego. (Run!)
 
 %roles o y x
-role(o).
-role(x).
+role(o,Estado).
+role(x,_).
 
 %estado inicial
-init(cell(1,1,b)).
-init(cell(1,2,b)).
-init(cell(1,3,b)).
-init(cell(2,1,b)).
-init(cell(2,2,b)).
-init(cell(2,3,b)).
-init(cell(3,1,b)).
-init(cell(3,2,b)).
-init(cell(3,3,b)).
+init(cell(1,1,6,b)).
+init(cell(1,2,1,b)).
+init(cell(1,3,2,b)).
+init(cell(1,4,3,b)).
+init(cell(1,5,6,b)).
+init(cell(1,6,5,b)).
+init(cell(2,1,4,b)).
+init(cell(2,2,5,b)).
+init(cell(2,3,3,b)).
+init(cell(2,4,5,b)).
+init(cell(2,5,2,b)).
+init(cell(2,6,1,b)).
+init(cell(3,1,5,b)).
+init(cell(3,2,3,b)).
+init(cell(3,3,6,b)).
+init(cell(3,4,4,b)).
+init(cell(3,5,5,b)).
+init(cell(3,6,4,b)).
+init(cell(4,1,1,b)).
+init(cell(4,2,6,b)).
+init(cell(4,3,1,b)).
+init(cell(4,4,6,b)).
+init(cell(4,5,4,b)).
+init(cell(4,6,2,b)).
+init(cell(5,1,3,b)).
+init(cell(5,2,4,b)).
+init(cell(5,3,2,b)).
+init(cell(5,4,3,b)).
+init(cell(5,5,2,b)).
+init(cell(5,6,6,b)).
+init(cell(6,1,2,b)).
+init(cell(6,2,5,b)).
+init(cell(6,3,4,b)).
+init(cell(6,4,1,b)).
+init(cell(6,5,3,b)).
+init(cell(6,6,1,b)).
+init(rol(o,0)).
 init(control(o)).
 
 %posibles valores que pueden tener las relaciones
-base(control(X)):- role(X).
+base(control(X)):- role(X,_).
 base(cell(X,Y,b)):- index(X),index(Y).
-base(cell(X,Y,R)):- role(R),index(X),index(Y).
+base(cell(X,Y,R)):- role(R,_),index(X),index(Y).
 
 index(1).
 index(2).
 index(3).
+index(4).
+index(5).
+index(6).
 
 %posibles valores que pueden tener las entradas
-input(R,mark(X,Y)):- role(R),index(X),index(Y).
-input(R,noop):-role(R).
+input(R,mark(X,Y)):- role(R,_),index(X),index(Y).
+input(R,noop):-role(R,_).
 
 %movimientos legales
+%Propios
 legal(W,mark(X,Y)) :-
-	t(cell(X,Y,b)),t(control(W)).
-legal(o,noop) :-
-	t(control(x)).
-legal(x,noop) :-
-      t(control(o)).
+	t(\+cell(X,Y,_,W)),t(control(W)).
+
+legal(o,mark(X,Y)) :-
+	t(control(o)),
+	(W is X + 2,t(cell(W,Y,_,b));
+	 W is X + 2,t(cell(X,W,_,b));
+	 W is X - 2,t(cell(W,Y,_,b));
+	 W is X - 2,t(cell(X,W,_,b)):
+	 W is X + 1,Z is Y + 1,t(cell(W,Z,_,b));
+	 W is X - 1,Z is Y + 1,t(cell(W,Z,_,b));
+	 W is X + 1,Z is Y - 1,t(cell(W,Z,_,b));
+	 W is X - 1,Z is Y - 1,t(cell(W,Z,_,b))).
+
+legal(x,mark(X,Y)) :-
+	t(control(x)),
+	(W is X + 1,t(cell(W,Y,_,_));
+	 W is X + 1,t(cell(X,W,_,_));
+	 W is X - 1,t(cell(W,Y,_,_));
+	 W is X - 1,t(cell(X,W,_,_)):
+	 W is X + 1,Z is Y + 1,t(cell(W,Z,_,_));
+	 W is X - 1,Z is Y + 1,t(cell(W,Z,_,_));
+	 W is X + 1,Z is Y - 1,t(cell(W,Z,_,_));
+	 W is X - 1,Z is Y - 1,t(cell(W,Z,_,_)).
+
+
+  % legal(o,mark(X,Y)) :-
+	% 	W is X + 2,t(cell(W,Y,_,b)),t(control(o)).
+  % legal(o,mark(X,Y)) :-
+  % 	W is X + 2,t(cell(X,W,_,b)),t(control(o)).
+  % legal(o,mark(X,Y)) :-
+  % 	W is X - 2,t(cell(W,Y,_,b)),t(control(o)).
+  % legal(o,mark(X,Y)) :-
+  % 	W is X - 2,t(cell(X,W,_,b)),t(control(o)).
+  % legal(o,mark(X,Y)) :-
+  % 	W is X + 1,Z is Y + 1,t(cell(W,Z,_,b)),t(control(o)).
+  % legal(o,mark(X,Y)) :-
+  % 	W is X - 1,Z is Y + 1,t(cell(W,Z,_,b)),t(control(o)).
+  % legal(o,mark(X,Y)) :-
+  % 	W is X + 1,Z is Y - 1,t(cell(W,Z,_,b)),t(control(o)).
+  % legal(o,mark(X,Y)) :-
+  % 	W is X - 1,Z is Y - 1,t(cell(W,Z,_,b)),t(control(o)).
+
+
+
+
+%Ta-te-ti
+% legal(W,mark(X,Y)) :-
+% 	t(cell(X,Y,b)),t(control(W)).
+% legal(o,noop) :-
+% 	t(control(x)).
+% legal(x,noop) :-
+%       t(control(o)).
 
 %próximo estado
 next(cell(M,N,x)) :-
@@ -76,13 +155,22 @@ next(control(x)) :-
 %goal(o,0) :- line(x), \+line(o).
 
 goal(x,0) :- line(x),\+line(o).
-goal(x,50) :-  \+line(x), \+line(o).
+%goal(x,50) :-  \+line(x), \+line(o).
 goal(x,100) :- \+line(x), line(o).
 
 goal(o,0) :- \+line(x), line(o).
-goal(o,50) :- \+line(x), \+line(o).
-goal(o,100) :- line(x), \+line(o).
+%goal(o,50) :- \+line(x), \+line(o).
+goal(o,100) :- role(o,6).
 
+
+%Definicion de predicados auxiliares para puntaje de x
+cantidad_materias(1,N).
+cantidad_materias(1,N).
+cantidad_materias(1,N).
+cantidad_materias(1,N).
+cantidad_materias(1,N).
+cantidad_materias(1,N).
+cantidad_materias(1,N).
 
 line(Z) :- row(_M,Z).
     line(Z) :- column(_M,Z).
@@ -196,14 +284,19 @@ imprime:-
 	imprime_fila(1),
 	imprime_fila(2),
 	imprime_fila(3),
+      imprime_fila(4),
+      imprime_fila(5),
+      imprime_fila(6),
 	display('********').
 
-imprime_fila(N):- 
+imprime_fila(N):-
 	t(cell(N,1,C1)),t(cell(N,2,C2)),t(cell(N,3,C3)),
-	display(C1),display(C2),display(C3),nl.
+      t(cell(N,4,C4)),t(cell(N,5,C5)),t(cell(N,6,C6)),
+	display(C1),display(C2),display(C3),
+      display(C4),display(C5),display(C6),nl.
 
 
-%desarrollo jugador o       
+%desarrollo jugador o
 jugador(o,A):-
  legal(o,A).
 
@@ -215,7 +308,7 @@ jugador(x,X):-
  read(X).
 % display('Ingrese Marca en Y:'),
 % read_term(Y,[]).
-% 
+%
 /** <examples>
 ?- inicio,juego.
 */
