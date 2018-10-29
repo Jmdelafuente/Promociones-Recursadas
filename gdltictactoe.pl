@@ -228,40 +228,26 @@ next(materia(Mat)):-
 		does(o,noop),
 		t(materia(Mat)).
 
-%Predicado auxiliar para encontrar la lista de menor long.
-% select_element(Goal, [Head | Tail], Selected) :-
-%     select_element(Goal, Tail, Head, Selected).
-%
-%
-% select_element(_Goal, [], Selected, Selected).
-%
-% select_element(Goal, [Head | Tail], Current, FinalSelected) :-
-%     call(Goal, Head, Current, Selected),
-%     select_element(Goal, Tail, Selected, FinalSelected).
-%
-% get_bigger_number(N1, N2, N) :-
-%     N is max(N1, N2).
-%
-% get_bigger_list(L1,L2,L2) :-
-% 		length(L1,N1),
-% 		length(L2,N2),
-% 		N1>=N2.
-%
-% get_bigger_list(L1,L2,L1) :-
-% 		length(L1,N1),
-% 		length(L2,N2),
-% 		N1<N2.
-%
-% listas(N,[LL1|LL]):-
-% 	t(lista([M,LL1])),
-% 	\+ t(lista([M,LL1])),
-% 	N<M,
-% 	listas(N,LL).
-%
-% listas(_N,[]).
 
-%Cambiamos las reglas pierde el que hace TATETI
-goal(x,M) :- t(materia(N)),M is (6-N)*100/6.
+% Predicado auxiliar para encontrar que materia tiene menos apariciones
+materia_x(Max):-
+  t(materia(GO)), %Materia actual
+  findall(X,between(1,GO,X),MateriasYaCursadas), %Todas las materias 'cursadas'
+  subtract([1,2,3,4,5,6],MateriasYaCursadas,Materias), %Removemos las 'cursadas'
+  cantidades(Materias,R), %Buscamos las cantidades de las no cursadas
+  max_list(R,Max). %Cual es el mayor numero
+
+% Buscamos la cantidad que le falta a cada materia de la lista
+cantidades([0|T],R):-
+  cantidades(T,R).
+cantidades([H|T],[C|R]):-
+  t(cantidad(H,C)),
+  cantidades(T,R).
+cantidades([],[]).
+
+
+
+goal(x,M) :- materia_x(N),M is (6-N)*100/6.
 goal(o,M) :- t(materia(X)),M is X * 100/6.
 
 
@@ -409,3 +395,47 @@ jugador(x,X):-
 ?- inicio,juego.
 */
 %
+
+% Desarrollo del Agente
+
+  % Encontrar todos los estados posibles y legales
+  % get_estados_legales(+Rol,-Legales)
+	get_estados_legales(Rol,Legales):-
+		findall(X,input(Rol,X),Posibles),include(legal(Rol),Posibles,Legales).
+
+  % Simular movimiento A para el rol J
+  % Simular_movimiento(+Rol,+Movimiento,-ListadoT,-Estado,-Goal)
+  simular_movimiento(J,A,ListaT,N,Goal):-
+    %Simulamos que elegimos el movimiento
+    assert(does(J,A)),
+    role(O), distinct(J,O),
+    assert(does(O,noop)),
+    %Continuamos con el juego
+    estado(N),
+    proximo_estado,
+    %h(E,Y),
+    findall(X,t(X),ListaT),
+    retractall(t(_Y)),
+    crea_estado,
+    imprime,
+    % Verificamos el goal del estado
+    goal(J,Goal).%,display(Goal),nl,
+
+  % deshacer_movimiento(+ListaT,+Estado)
+  % ListaT contiene todos los True hasta antes del estado simulado
+  % Estado es el numero que le corresponde al Estado anterior a la simulacion
+  deshacer_movimiento(ListaT,N):-
+    % Retractamos el movimiento
+    N2 is N + 1,
+    retractall(does(_X,_A)),
+    retractall(t(_)),
+    retractall(h(N2,_)),
+    retract(estado(_)),
+    maplist(crear_t,ListaT),
+    assert(estado(N)).
+    %assert(t(E)),
+    %imprime.
+
+  % Predicado auxiliar para crear aserciones t
+  crear_t(X):-
+    assert(t(X)).
