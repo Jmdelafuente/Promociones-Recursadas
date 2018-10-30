@@ -145,16 +145,16 @@ legal(x,noop) :-
     t(cell(X,W,_,x)),Y is W + 1,t(cell(X,Y,_,b)),t(control(x)).
 	legal(x,move(X,Y)) :-
 		%t(cell(W,Z,_,x)),W is X + 1,Z is Y + 1,t(cell(X,Y,_,b)),t(control(x)).
-    t(cell(W,Z,_,x)),X is W - 1,Z is Y + 1,t(cell(X,Y,_,b)),t(control(x)).
+    t(cell(W,Z,_,x)),X is W - 1,Y is Z - 1,t(cell(X,Y,_,b)),t(control(x)).
 	legal(x,move(X,Y)) :-
 		%t(cell(W,Z,_,x)),W is X - 1,Z is Y + 1,t(cell(X,Y,_,b)),t(control(x)).
-    t(cell(W,Z,_,x)),X is W + 1,Z is Y + 1,t(cell(X,Y,_,b)),t(control(x)).
+    t(cell(W,Z,_,x)),X is W + 1,Y is Z - 1,t(cell(X,Y,_,b)),t(control(x)).
 	legal(x,move(X,Y)) :-
 		%t(cell(W,Z,_,x)),W is X + 1,Z is Y - 1,t(cell(X,Y,_,b)),t(control(x)).
-    t(cell(W,Z,_,x)),X is W - 1,Z is Y - 1,t(cell(X,Y,_,b)),t(control(x)).
+    t(cell(W,Z,_,x)),X is W - 1,Y is Z + 1,t(cell(X,Y,_,b)),t(control(x)).
 	legal(x,move(X,Y)) :-
 		%t(cell(W,Z,_,x)),W is X - 1,Z is Y - 1,t(cell(X,Y,_,b)),t(control(x)).
-    t(cell(W,Z,_,x)),X is W + 1,Z is Y - 1,t(cell(X,Y,_,b)),t(control(x)).
+    t(cell(W,Z,_,x)),X is W + 1,Y is Z + 1,t(cell(X,Y,_,b)),t(control(x)).
 %próximo estado
 next(cell(M,N,0,x)) :-
       does(x,move(M,N)),
@@ -260,7 +260,7 @@ goal(o,M) :- t(materia(X)),M is X * 100/6.
 
 
  terminal :- \+open.
- open :- t(materia(N)),succ(N,Su),t(cantidad(Su,X)),X>0.
+  open :- t(materia(N)),succ(N,Su),t(cantidad(Su,X)),X>0.
 
 
 
@@ -299,7 +299,7 @@ juego:- \+terminal,
  proximo_estado,
  retractall(t(_Y)),
  crea_estado,
- imprime.
+ imprime,
  juego.
 
 juego:- terminal,
@@ -313,26 +313,42 @@ inserta_acciones:- t(control(X)),
    role(O), distinct(X,O),
    assert(does(O,noop)).
 
-%calcula el próximo estado
-proximo_estado:-
-  estado(E),
-	next(Y),
-	\+(h(E,Y)),
-	assert(h(E,Y)),
-	proximo_estado.
-proximo_estado.
 
-%crea el estado actual
-crea_estado:-
-	estado(E),
-	h(E,Y),
-	\+(t(Y)),
-	assert(t(Y)),
-	crea_estado.
-crea_estado:-
- retract(estado(N)),
- N2 is N +1,
- assert(estado(N2)).
+   %calcula el próximo estado
+   proximo_estado:-
+   estado(E),
+   forall((next(Y),\+h(E,Y)), assert(h(E,Y))).
+
+   %crea el estado actual
+   crea_estado:-
+   estado(E),
+   forall((h(E,Y),\+t(Y)), assert(t(Y))),
+   retract(estado(State)),
+   NewState is State +1,
+   assert(estado(NewState)).
+
+
+
+%calcula el próximo estado
+% proximo_estado:-
+%   estado(E),
+% 	next(Y),
+% 	\+(h(E,Y)),
+% 	assert(h(E,Y)),
+% 	proximo_estado.
+% proximo_estado.
+%
+% %crea el estado actual
+% crea_estado:-
+% 	estado(E),
+% 	h(E,Y),
+% 	\+(t(Y)),
+% 	assert(t(Y)),
+% 	crea_estado.
+% crea_estado:-
+%  retract(estado(N)),
+%  N2 is N +1,
+%  assert(estado(N2)).
 
 %imprime estado actual del juego
 imprime:-
@@ -380,18 +396,25 @@ imprime_color(x):-
 imprime_color(Char):-
 	display(Char).
 
+%:- include('agente-VS').
+
+
 %desarrollo jugador o
 jugador(o,A):-
- legal(o,A).
- % ansi_format([bold,fg(green)], '~w', ['JUGADOR O: Ingrese próximo movimiento: ']),
+
+ %legal(o,A).
+  ansi_format([bold,fg(green)], '~w', ['JUGADOR O: Ingrese próximo movimiento: ']),
  % read(A).
- % greedy(o,A),nl.
+ greedy(o,A),nl. 
+% agente(o,A),nl.
 
 %desarrollo jugador x
 jugador(x,X):-
  %legal(x,X).
  ansi_format([bold,fg(green)], '~w', ['JUGADOR X: Ingrese próximo movimiento: ']),
- cambio_de_plan(x,X),nl.
+ %cambio_de_plan(x,X),nl.
+greedy(x,X).
+% greedy(x,X),nl.
 % read(X).
 % display('Ingrese Marca en Y:'),
 % read_term(Y,[]).
