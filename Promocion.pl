@@ -11,6 +11,12 @@ role(x).
 %NumeroMateria representa una materia de 1 a 6.
 %OcupadoPor: jugador x, jugador o, o blanco.
 %listas de materias
+% init(lista(1,[[1,2],[2,6],[4,1],[4,3],[6,4],[6,6]])).
+% init(lista(2,[[1,3],[2,5],[4,6],[5,3],[5,5],[6,1]])).
+% init(lista(3,[[1,4],[2,3],[3,2],[5,1],[5,4],[6,5]])).
+% init(lista(4,[[2,1],[3,4],[3,6],[4,5],[5,2],[6,3]])).
+% init(lista(5,[[1,6],[2,2],[2,4],[3,1],[3,5],[6,2]])).
+% init(lista(6,[[1,1],[1,5],[3,3],[4,2],[4,4],[5,6]])).
 init(cantidad(1,6)).
 init(cantidad(2,6)).
 init(cantidad(3,6)).
@@ -241,6 +247,10 @@ next(materia(Mat)):-
 % Predicado auxiliar para encontrar que materia tiene menos apariciones
 materia_x(Min):-
   t(materia(GO)), %Materia actual
+  % findall(X,between(1,GO,X),MateriasYaCursadas), %Todas las materias 'cursadas'
+  % subtract([1,2,3,4,5,6],MateriasYaCursadas,Materias), %Removemos las 'cursadas'
+  % cantidades(Materias,R), %Buscamos las cantidades de las no cursadas
+  % min_list(R,Max). %Cual es el mayor numero
   Ma is GO +1,
   sinlistas(Ma,7,7,Min).
 
@@ -253,6 +263,15 @@ sinlistas(MA,CantA,MinA,Min):-
   ((Cant < CantA,
   sinlistas(N,Cant,Cant,Min));
   sinlistas(N,CantA,MinA,Min)).
+
+% Buscamos la cantidad que le falta a cada materia de la lista
+% cantidades([0|T],R):-
+%   cantidades(T,R).
+% cantidades([H|T],[C|R]):-
+%   t(cantidad(H,C)),
+%   cantidades(T,R).
+% cantidades([],[]).
+
 
 
 goal(x,M) :- materia_x(N),M is (6-N)*100/6.
@@ -267,6 +286,9 @@ goal(o,M) :- t(materia(X)),M is X * 100/6.
 distinct(X,Y):-
 X\==Y.
 
+% distinct2([X,Y],[A,B]):-
+% 	X\==A,
+% 	Y\==B.
 
 %inicializa estado inicial y borra historial
 :-dynamic t/1,h/2,estado/1,does/2.
@@ -300,7 +322,7 @@ juego:- \+terminal,
  retractall(t(_Y)),
  crea_estado,
  imprime.
- juego.
+ %juego.
 
 juego:- terminal,
 	goal(x,Px),goal(o,Po),
@@ -391,7 +413,7 @@ jugador(o,A):-
 jugador(x,X):-
  %legal(x,X).
  ansi_format([bold,fg(green)], '~w', ['JUGADOR X: Ingrese próximo movimiento: ']),
- cambio_de_plan(x,X),nl.
+ greedy(x,X),nl.
 % read(X).
 % display('Ingrese Marca en Y:'),
 % read_term(Y,[]).
@@ -429,7 +451,16 @@ jugador(x,X):-
      % imprime,
     % Verificamos el goal del estado
     goal(J,Goal).%,display(Goal),nl,
-
+    % Retractamos el movimiento
+    % N2 is N + 1,
+    % retractall(does(_X,_A)),
+    % retractall(t(_)),
+    % retractall(h(N2,_)),
+    % retract(estado(_)),
+    % maplist(crear_t,ListaT),
+    % assert(estado(N)),
+    % % assert(t(E)),
+    % imprime.
 
 
   % deshacer_movimiento(+ListaT,+Estado)
@@ -473,41 +504,13 @@ jugador(x,X):-
     ((G > MejorGA,greedy1(Rol,T,G,H,Mejor));
     (greedy1(Rol,T,MejorGA,MejorA,Mejor))).
 
+  % greedy1(Rol,[_H|T],MejorGA,MejorA,Mejor):-
+  %   greedy1(Rol,T,MejorGA,MejorA,Mejor).
 
-    % Agente Cambio de Plan
-    % cambio_de_plan(Rol,MejorJugada):-
-    %   % get_estados_legales(Rol,[HL|TL]),
-    %   get_estados_legales(Rol,Legales),
-    %   findall(X,historial_celdas(X),CeldasUsadas),
-    %   list_difference_eq(Legales,CeldasUsadas,[HL|TL]),
-    %   ganancia(Rol,HL,G),
-    %   cambio_de_plan1(Rol,TL,G,HL,MejorJugada),
-    %   display(MejorJugada).
-    %
-    %
-    % cambio_de_plan1(_Rol,[],_MejorGA,MejorA,MejorA).
-    %
-    % cambio_de_plan1(Rol,[H|T],MejorGA,MejorA,Mejor):-
-    %
-    %   ganancia(Rol,H,G),
-    %   % display(H),display(': '),display(G),nl,
-    %   ((G > MejorGA,cambio_de_plan1(Rol,T,G,H,Mejor));
-    %   (cambio_de_plan1(Rol,T,MejorGA,MejorA,Mejor))).
 
-    historial_celdas((x,move(X,Y))):-
-      h(_,cell(X,Y,_,x)).
 
-    misma_celda([H|T],X,Y):-
-      H == X,
-      T == Y.
-  % ejemplo(R,GA,G):-
-  %   legal(R,M),
-  %   comparar(R,M,GA,G),
-  %   fail.
-  %
-  % ejemplo(R,GA,G):- !.
-  %
-  % comparar(R,M,G1,G):-
-  %   ganancia(R,M,G),
-  %   G > G1.
-  % comparar(_R,_M,G,G).
+  ejemplo(R,M,GA,G):-
+    legal(R,M),
+    fail.
+
+  ejemplo(R,M,GA,G):- !.
