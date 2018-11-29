@@ -1,0 +1,130 @@
+(role o).
+(role x).
+(init (cantidad 1 6)).
+(init (cantidad 2 6)).
+(init (cantidad 3 6)).
+(init (cantidad 4 6)).
+(init (cantidad 5 6)).
+(init (cantidad 6 6)).
+(init (materia 0)).
+(init (cell 1 1 6 b)).
+(init (cell 1 2 1 b)).
+(init (cell 1 3 2 b)).
+(init (cell 1 4 3 b)).
+(init (cell 1 5 6 b)).
+(init (cell 1 6 5 b)).
+(init (cell 2 1 4 b)).
+(init (cell 2 2 5 b)).
+(init (cell 2 3 3 b)).
+(init (cell 2 4 5 b)).
+(init (cell 2 5 2 x)).
+(init (cell 2 6 1 b)).
+(init (cell 3 1 5 b)).
+(init (cell 3 2 3 b)).
+(init (cell 3 3 6 b)).
+(init (cell 3 4 4 b)).
+(init (cell 3 5 5 b)).
+(init (cell 3 6 4 b)).
+(init (cell 4 1 1 b)).
+(init (cell 4 2 6 b)).
+(init (cell 4 3 1 b)).
+(init (cell 4 4 6 b)).
+(init (cell 4 5 4 b)).
+(init (cell 4 6 2 b)).
+(init (cell 5 1 3 b)).
+(init (cell 5 2 4 b)).
+(init (cell 5 3 2 b)).
+(init (cell 5 4 3 b)).
+(init (cell 5 5 2 b)).
+(init (cell 5 6 6 b)).
+(init (cell 6 1 2 o)).
+(init (cell 6 2 5 b)).
+(init (cell 6 3 4 b)).
+(init (cell 6 4 1 b)).
+(init (cell 6 5 3 b)).
+(init (cell 6 6 1 b)).
+(init (rol o 0)).
+(init (control o)).
+(<= (base (control ?a)) (role ?a)).
+(<= (base (cell ?a ?b ?c b)) (index ?a) (index ?b)).
+(<= (base (cell ?a ?b ?c ?d)) (role ?d) (index ?a) (index ?b)).
+(<= (base (lista ?a ?b)) (index ?a)).
+'(index 1).
+(index 2).
+(index 3).
+(index 4).
+(index 5).
+(index 6).
+(<= (input ?a (move ?b ?c)) (role ?a) (index ?b) (index ?c)).
+(<= (input ?a noop) (role ?a)).
+(<= (legal o noop) (true (control x))).
+(<= (legal x noop) (true (control o))).
+(<= (legal o (move ?a ?b)) (true (cell ?c ?b ?d o)) (minus ?c 2 ?a) (true (cell ?a ?b ?e b)) true (control o))).
+(<= (legal o (move ?a ?b)) (true (cell ?a ?c ?d o)) (minus ?c 2 ?b) (true (cell ?a ?b ?e b)) true (control o))).
+(<= (legal o (move ?a ?b)) (true (cell ?c ?b ?d o)) (sum ?c 2 ?a) (true (cell ?a ?b ?e b)) true (control o))).
+(<= (legal o (move ?a ?b)) (true (cell ?a ?c ?d o)) (sum ?c 2 ?b) (true (cell ?a ?b ?e b)) (true (control o))).
+(<= (legal o (move ?a ?b)) (true (cell ?c ?d ?e o)) (minus ?c 1 ?a) (minus ?d 1 ?b) (true cell ?a ?b ?f b)) (true (control o))).
+(<= (legal o (move ?a ?b)) (true (cell ?c ?d ?e o)) (sum ?c 1 ?a) (minus ?d 1 ?b) (true (cell ? ?b ?f b)) (true (control o))).
+(<= (legal o (move ?a ?b)) (true (cell ?c ?d ?e o)) (minus ?c 1 ?a) (sum ?d 1 ?b) (true (cell ?a ?b ?f b)) (true (control o))).
+(<= (legal o (move ?a ?b)) (true (cell ?c ?d ?e o)) (sum ?c 1 ?a) (sum ?d 1 ?b) (true (cell ?a ?b ?f b)) (true (control o))).
+(<= (legal x (move ?a ?b)) (true (cell ?c ?b ?d x)) (minus ?c 1 ?a) (true (cell ?a ?b ?e b)) (true (control x))).
+(<= (legal x (move ?a ?b)) (true (cell ?a ?c ?d x)) (minus ?c 1 ?b) (true (cell ?a ?b ?e b)) (true (control x))).
+(<= (legal x (move ?a ?b)) (true (cell ?c ?b ?d x)) (sum ?c 1 ?a) (true (cell ?a ?b ?e b)) (true (control x))).
+(<= (legal x (move ?a ?b)) (true (cell ?a ?c ?d x)) (sum ?c 1 ?b) (true (cell ?a ?b ?e b)) (true (control x))).
+(<= (legal x (move ?a ?b)) (true (cell ?c ?d ?e x)) (minus ?c 1 ?a) (minus ?d 1 ?b) (true (cell ?a ?b ?f b)) (true (control x))).
+(<= (legal x (move ?a ?b)) (true (cell ?c ?d ?e x)) (sum ?c 1 ?a) (minus ?d 1 ?b) (true (cell ?a ?b ?f b)) (true (control x))).
+(<= (legal x (move ?a ?b)) (true (cell ?c ?d ?e x)) (minus ?c 1 ?a) (sum ?d 1 ?b) (true (cell ?a ?b ?f b)) (true (control x))).
+(<= (legal x (move ?a ?b)) (true (cell ?c ?d ?e x)) (sum ?c 1 ?a) (sum ?d 1 ?b) (true (cell ?a ?b ?f b)) (true (control x))).
+(<= (next (cell ?a ?b 0 x)) (does x (move ?a ?b)) (true (cell ?a ?b ?c b))).
+(<= (next (cell ?a ?b 0 x)) (does x noop) (true (cell ?a ?b ?c x))).
+(<= (next (cell ?a ?b ?c o)) (does o noop) (true (cell ?a ?b ?c o))).
+(<= (next (cell ?a ?b ?c o)) (does o (move ?a ?b)) (true (cell ?a ?b ?c b))).
+(<= (next (cell ?a ?b ?c b)) (does ?d (move ?e ?f)) (distinct ?a ?e) (true (cell ?a ?b ?c ?d))).
+(<= (next (cell ?a ?b ?c b)) (does ?d (move ?e ?f)) (distinct ?f ?b) (true (cell ?a ?b ?c ?d))).
+(<= (next (cell ?a ?b ?c b)) (does ?d (move ?e ?f)) (true (cell ?a ?b ?c b)) (distinct ?a ?e)).
+(<= (next (cell ?a ?b ?c b)) (does ?d (move ?e ?f)) (true (cell ?a ?b ?c b)) (distinct ?b ?f)).
+(<= (next (control o)) (true (control x))).
+(<= (next (control x)) (true (control o))).
+(<= (next (cantidad ?a ?b)) (does x (move ?c ?d)) (true (cell ?c ?d ?a ?e)) (true (cantidad ?a ?f)) (minus ?f 1 ?b)).
+(<= (next (cantidad ?a ?b)) (does x (move ?c ?d)) (true (cell ?c ?d ?e ?f)) (distinct ?a ?e) (true (cantidad ?a ?b))).
+(<= (next (cantidad ?a ?b)) (does x noop) (true (cantidad ?a ?b))).
+(<= (next (materia ?a)) (does o (move ?b ?c)) (true (cell ?b ?c ?a ?d)) (true (materia ?e)) (succ ?e ?a)).
+(<= (next (materia ?a)) (does o (move ?b ?c)) (true (cell ?b ?c ?d ?e)) (true (materia ?a)) (not (succ ?a ?d))).
+(<= (next (materia ?a)) (does o noop) (true (materia ?a))).
+(<= (materia_x ?a) (true (materia ?b)) (sum ?b 1 ?c) (sinlistas ?c 7 7 ?a)).
+(sinlistas 6 ?a ?b ?b).
+(<= (sinlistas ?a ?b ?c ?d) (true (cantidad ?a ?e)) (sum ?a 1 ?f) (or (menor ?e ?b) (sinlistas ?f ?e ?e ?d) (sinlistas ?f ?b ?c ?d))).
+(<= (goal x ?a) (materia_x ?b) (div (mult (minus 6 ?b) 100) 6 ?a)).
+(<= (goal o ?a) (true (materia ?b)) (div (mult ?b 100) 6 ?a)).
+(<= terminal (not open)).
+(<= open (true (materia ?a)) (succ ?a ?b) (true (cantidad ?b ?c)) (mayor ?c 0)).
+(<= (distinct ?a ?b) (distinct ?a ?b)).
+(<= inicio (retractall (true ?a)) (retractall (h ?b ?c)) (retractall (estado ?d)) crea_estado_inicial).
+(<= crea_estado_inicial (init ?a) (not (true ?a)) (assert (true ?a)) (assert (h 0 ?a)) crea_estado_inicial).
+(<= crea_estado_inicial (assert (estado 1))).
+(<= juego (not terminal) (retractall (does ?a ?b)) inserta_acciones proximo_estado (retractall (true ?c)) crea_estado imprime juego).
+(<= juego terminal (goal x ?a) (goal o ?b) (display x gano ) (display ?a) (display  puntos y o gano ) (display ?b) (display  puntos.)).
+(<= inserta_acciones (true (control ?a)) (jugador ?a ?b) (legal ?a ?b) (assert (does ?a ?b)) (role ?c) (distinct ?a ?c) (assert (does ?c noop))).
+(<= proximo_estado (estado ?a) (forall ( (next ?b) (\\+ (h ?a ?b))) (assert (h ?a ?b)))).
+(<= crea_estado (estado ?a) (forall ( (h ?a ?b) (\\+ (true ?b))) (assert (true ?b))) (retract (estado ?c)) (sum ?c 1 ?d) (assert (estado ?d))).
+(<= imprime (estado ?a) (display Estado: ) (display ?a) nl (true (control ?b)) (display Control: ) (display ?b) nl (imprime_fila 1) imprime_regla (imprime_fila 2) imprime_regla (imprime_fila ) imprime_regla (imprime_fila 4) imprime_regla (imprime_fila 5) imprime_regla (imprime_fila 6) imprime_regla (display ********) nl (display Cursando la Materia: ) (true (materia ?c)) (display ?c) nl).
+(<= (imprime_fila ?a) (true (cell ?a 1 ?b ?c)) (true (cell ?a 2 ?d ?e)) (true (cell ?a 3 ?f ?g)) (true (cell ?a 4 ?h ?i)) (true (cell ?a 5 ?j ?k)) (true (cell ?a 6 ?l ?m)) (display ?b) (imprime_color ?c) (display |) (display ?d) (imprime_color ?e) (display |) (display ?f) (imprime_color ?g) (display |) (display ?h) (imprime_color ?i) (display |) (display ?j) (imprime_color ?k) (display |) (display ?l) (imprime_color ?m) (display |) nl).
+(<= imprime_regla (display minus) (display minus) (display minus) (display minus) (display minus) (display minus) nl).
+(<= (imprime_lista ?a) (true (lista ?a ?b)) (display ?b) nl).
+(<= (imprime_color b) (display b)).
+(<= (imprime_color o) (ansi_format (. bold (. (fg blue) [])) ~w (. o []))).
+(<= (imprime_color x) (ansi_format (. bold (. (fg red) [])) ~w (. x []))).
+(<= (imprime_color ?a) (display ?a)).
+(<= (jugador o ?a) (ansi_format (. bold (. (fg green) [])) ~w (. JUGADOR O: Ingrese próximo movimiento:  [])) (greedy o ?a) nl).
+(<= (jugador x ?a) (ansi_format (. bold (. (fg green) [])) ~w (. JUGADOR X: Ingrese próximo movimiento:  [])) (greedy x ?a)).
+(<= (get_estados_legales ?a ?b) (findall ?c (input ?a ?c) ?d) (include (legal ?a) ?d ?b)).
+(<= (simular_movimiento ?a ?b ?c ?d ?e) (findall ?f (true ?f) ?c) (estado ?d) (retractall (does ?g ?h)) (assert (does ?a ?b)) (role ?i) (distinct ?a ?i) (assert (does ?i noop)) proximo_estado (retractall (true ?j)) crea_estado (goal ?a ?e)).
+(<= (deshacer_movimiento ?a ?b) (sum ?b 1 ?c) (retractall (does ?d ?e)) (retractall (true ?e)) (retractall (h ?b ?f)) (retract (estado ?c)) (maplist crear_t ?a) (assert (estado ?b))).
+(<= (crear_t ?a) (assert (true ?a))).
+(<= (ganancia ?a ?b ?c) (simular_movimiento ?a ?b ?d ?e ?c) (deshacer_movimiento ?d ?e)).
+(<= (greedy ?a ?b) (get_estados_legales ?a (. ?c ?d)) (ganancia ?a ?c ?e) (greedy1 ?a ?d ?e ?c ?b) (display ?b)).
+(greedy1 ?a [] ?b ?c ?c).
+(<= (greedy1 ?a (. ?b ?c) ?d ?e ?f) (ganancia ?a ?b ?g) (or (mayor ?g ?d) (greedy1 ?a ?c ?g ?b ?f) (greedy1 ?a ?c ?d ?e ?f))).
+(<= (historial_celdas ( x (move ?a ?b))) (h ?c (cell ?a ?b ?d x))).
+(<= (misma_celda (. ?a ?b) ?c ?d) (igual ?a ?c) (igual ?b ?d)).
+
